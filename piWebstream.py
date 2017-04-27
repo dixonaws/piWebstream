@@ -1,9 +1,12 @@
+#!/usr/bin/python3
+
 import io
 import picamera
 import logging
 import socketserver
 from threading import Condition
 from http import server
+
 
 PAGE="""\
 <html>
@@ -77,9 +80,12 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
+with picamera.PiCamera(resolution='800x600', framerate=24) as camera:
+    print("Visit my IP on port 8000 to see live video.")
     output = StreamingOutput()
     camera.start_recording(output, format='mjpeg')
+    camera.capture('videostill.jpg', use_video_port=True)
+    camera.wait_recording(10)
    
     try:
         address = ('', 8000)
